@@ -1,0 +1,74 @@
+\section{An algorithm for choosing a lunch plan}
+
+We need easier time to choose a lunch plan.
+We present [[<<lunch.py>>]].
+<<lunch.py>>=
+import random
+
+<<helper functions>>
+
+lunches = <<list of lunch options>>
+
+def choose_lunch(lunches):
+  <<randomly choose a lunch>>
+
+print(choose_lunch(lunches))
+@ The trick to this program is how to [[<<randomly choose a lunch>>]].
+Below we will discuss a few options, specifically these are:
+\begin{itemize}
+\item [[<<choose lunch plan uniformly at random>>]] with the corresponding
+[[<<uniformly distributed list of lunch options>>]].
+\item [[<<choose lunch plan according to distribution>>]] and
+[[<<list of preferred lunch options>>]].
+\end{itemize}
+Currently we will let
+<<randomly choose a lunch>>=
+<<choose lunch plan according to distribution>>
+@ and
+<<list of lunch options>>=
+<<list of preferred lunch options>>
+@
+
+
+\section{Choosing uniformly at random}
+
+If we want to choose uniformly at random we only need a list of lunch options 
+and then choose randomly between them.
+<<choose lunch plan uniformly at random>>=
+return random.choice(lunches)
+@ Then our list of lunch options can be defined as follows:
+<<uniformly distributed list of lunch options>>=
+["Supelec", "Longs Champs", "La P'tite Pause", "Sandwich", "Biocoop"]
+@
+
+
+\section{Choosing according to a distribution}
+
+If we have a preference for some lunch places, we can complement them with 
+weights, forming a specific probability distribution.
+Say that we encode this as follows:
+<<list of preferred lunch options>>=
+[ ("Supelec", 1),
+  ("Longs Champs", 1),
+  ("La P'tite Pause", 0.5)
+  ("Sandwich", 0.7),
+  ("Biocoop", 0.3) ]
+@ Then we can use the [[random.choices]] function in Python.
+This function requires two lists, one for the population (i.e.\ lunch options) 
+and one for weights (i.e.\ our preferences).
+The [[unzip]] function will create these two lists for us.
+<<helper functions>>=
+def unzip(l):
+  first = []
+  second = []
+  for tup in l:
+    first += [tup[0]]
+    second += [tup[1]]
+  return (first, second)
+@
+
+Now we can simply unzip the list and let the library choose:
+<<choose lunch plan according to distribution>>=
+(population, preferences) = unzip(lunches)
+return random.choices(population, preferences)
+@
